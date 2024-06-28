@@ -36,18 +36,33 @@ struct PokemonTypeName {
     }
 }
 
-struct PokemonData {
+struct PokemonData: Codable {
     var id: String
     var name: String
     var imgUrl: String
-    var type: String
+    var types: String
     var evoChain: [String] = []
-    var flavorText: [String:String] = [:]
+    var flavorTextTable: [String:String] = [:]
     
     init(_ json: JSON) {
         id = json["id"].stringValue
         name = json["name"].stringValue
         imgUrl = json["sprites"].dictionaryValue["front_default"]?.stringValue ?? ""
-        type = json["types"].arrayValue.map { PokemonType($0).type.name }.joined(separator: " ")
+        types = json["types"].arrayValue.map { PokemonType($0).type.name }.joined(separator: " ")
+    }
+    
+    mutating func updateDefaultInfo(pokemon: PokemonData) {
+        id = pokemon.id
+        name = pokemon.name
+        imgUrl = pokemon.imgUrl
+        types = pokemon.types
+    }
+    
+    mutating func updateFlavorTextTable(_ table: [String:String]) {
+        flavorTextTable = table
+    }
+    
+    mutating func updateEvolutionChainIds(_ chain: [String]) {
+        evoChain = chain
     }
 }

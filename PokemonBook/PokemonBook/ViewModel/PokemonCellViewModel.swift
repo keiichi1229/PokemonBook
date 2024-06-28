@@ -8,24 +8,43 @@
 import RxRelay
 import RxSwift
 import SwiftyJSON
+import SwiftUI
 
 class PokemonCellViewModel: BaseViewModel {
-    let id = BehaviorRelay<String>(value: "")
+    private(set) var pId: String = ""
+    let displayId = BehaviorRelay<String>(value: "")
     let name = BehaviorRelay<String>(value: "")
     let pokemonImgUrl = BehaviorRelay<String>(value: "")
-    let type = BehaviorRelay<String>(value: "")
+    let types = BehaviorRelay<String>(value: "")
+    let favorite = BehaviorRelay<Bool>(value: false)
     
     func fetchPokemonCellData(_ id: String) {
+        if let pokemon = AppCache.shared.getPokemon(id: id) {
+            setupPokemon(data: pokemon)
+        }
+        
         ApiProvider.shared
             .request(PokemonDataService.fetchPokemonDataFromId(pId: id))
             .subscribe(onSuccess: { [weak self] res in
-                let data = GetPokemonCellDataResponse(JSON(res)).data
-                self?.id.accept(data.id.formatToTag())
-                self?.name.accept(data.name.capitalized)
-                self?.type.accept(data.type.capitalized)
-                self?.pokemonImgUrl.accept(data.imgUrl)
+                let data = GetPokemonDataResponse(JSON(res)).data
+                self?.setupPokemon(data: data)
+                AppCache.shared.savePokemon(id: data.id, pokemon: data)
         }, onFailure: { err in
             print("Cell Error:\(err)")
         }).disposed(by: disposeBag)
+    }
+    
+    private func setupPokemon(data: PokemonData) {
+        self.displayId.accept(data.id.formatToTag())
+        self.name.accept(data.name.capitalized)
+        self.types.accept(data.types.capitalized)
+        self.pokemonImgUrl.accept(data.imgUrl)
+        self.favorite.accept(AppCache.shared.isFavorite(id: data.id))
+        self.pId = data.id
+    }
+    
+    func updateFavorite() {
+        self.favorite.accept(!self.favorite.value)
+        AppCache.shared.updateFavorite(id: self.pId, favorite: self.favorite.value)
     }
 }

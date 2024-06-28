@@ -12,7 +12,8 @@ enum PokemonDataService {
     case fetchPokemonList(limit: Int, offset: Int)
     case fetchPokemonDataFromId(pId: String)
     case fetchPokemonDataFromName(name: String)
-    case fetchPokemonSpeciesFromName(name: String)
+    case fetchPokemonSpeciesFromId(pId: String)
+    case fetchEvolutionChainFromId(evoId: String)
 }
 
 extension PokemonDataService: TargetType {
@@ -32,8 +33,10 @@ extension PokemonDataService: TargetType {
             return "/pokemon/\(pId)"
         case .fetchPokemonDataFromName(let name):
             return "/pokemon/\(name)"
-        case .fetchPokemonSpeciesFromName(let name):
-            return "/pokemon-species/\(name)"
+        case .fetchPokemonSpeciesFromId(let pId):
+            return "/pokemon-species/\(pId)"
+        case .fetchEvolutionChainFromId(let evoId):
+            return "/evolution-chain/\(evoId)"
         }
     }
     
@@ -42,7 +45,8 @@ extension PokemonDataService: TargetType {
         case .fetchPokemonList,
              .fetchPokemonDataFromId,
              .fetchPokemonDataFromName,
-             .fetchPokemonSpeciesFromName:
+             .fetchPokemonSpeciesFromId,
+             .fetchEvolutionChainFromId:
             return .get
         }
     }
@@ -61,7 +65,8 @@ extension PokemonDataService: TargetType {
             return .requestParameters(parameters: params, encoding: URLEncoding.default)
         case .fetchPokemonDataFromId,
              .fetchPokemonDataFromName,
-             .fetchPokemonSpeciesFromName:
+             .fetchPokemonSpeciesFromId,
+             .fetchEvolutionChainFromId:
             return .requestParameters(parameters: [:], encoding: URLEncoding.default)
             
             

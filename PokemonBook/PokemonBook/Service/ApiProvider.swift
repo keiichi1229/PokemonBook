@@ -33,4 +33,12 @@ public class ApiProvider {
                 return Single.error(error)
             }
     }
+    
+    // for zip
+    func observe<Request: TargetType>(_ request: Request) -> Observable<Event<Any>> {
+        let target = MultiTarget(request)
+        return self.request(target)
+            .asObservable()
+            .materialize()
+    }
 }

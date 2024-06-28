@@ -36,8 +36,10 @@ class PokemonCell: UITableViewCell {
     
     let favoriteImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "heart.fill")
+        imageView.image = UIImage(systemName: "heart")
         imageView.tintColor = .red
+        imageView.isHidden = true
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -112,7 +114,7 @@ class PokemonCell: UITableViewCell {
         favoriteImageView.snp.remakeConstraints { make in
             make.trailing.equalToSuperview().offset(-16)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(24)
+            make.width.height.equalTo(30)
         }
     }
     
@@ -123,8 +125,18 @@ class PokemonCell: UITableViewCell {
             }).disposed(by: disposeBag)
         
         viewModel.name.bind(to: nameLabel.rx.text).disposed(by: disposeBag)
-        viewModel.id.bind(to: idLabel.rx.text).disposed(by: disposeBag)
-        viewModel.type.bind(to: typeLabel.rx.text).disposed(by: disposeBag)
+        viewModel.displayId.bind(to: idLabel.rx.text).disposed(by: disposeBag)
+        viewModel.types
+            .map {PokemonHelper.shared.colorizedPokemonTypes($0)}
+            .bind(to: self.typeLabel.rx.attributedText).disposed(by: disposeBag)
+        viewModel.favorite.subscribe(onNext: { [weak self] isFavorite in
+            self?.favoriteImageView.isHidden = false
+            self?.favoriteImageView.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
+        }).disposed(by: disposeBag)
+        
+        favoriteImageView.rx.tap.subscribe(onNext: { [weak self] _ in
+            self?.viewModel.updateFavorite()
+        }).disposed(by: disposeBag)
     }
 }
 
