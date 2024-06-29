@@ -16,7 +16,7 @@ class PokemonDataProvider: NSObject {
     let reachedBottom = PublishRelay<Void>()
 }
 
-extension PokemonDataProvider: UITableViewDataSource {
+extension PokemonDataProvider: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return pokemonIdList.value.count
     }
@@ -32,9 +32,7 @@ extension PokemonDataProvider: UITableViewDataSource {
         }
         return cell
     }
-}
-
-extension PokemonDataProvider: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }

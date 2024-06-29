@@ -15,7 +15,7 @@ class PokemonFavoriteDataProvider: NSObject {
     let favoriteIdList = BehaviorRelay<[String]>(value: [])
 }
 
-extension PokemonFavoriteDataProvider: UITableViewDataSource {
+extension PokemonFavoriteDataProvider: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return favoriteIdList.value.count
     }
@@ -31,9 +31,7 @@ extension PokemonFavoriteDataProvider: UITableViewDataSource {
         }
         return cell
     }
-}
-
-extension PokemonFavoriteDataProvider: UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }

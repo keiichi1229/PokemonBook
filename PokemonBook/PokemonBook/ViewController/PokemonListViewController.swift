@@ -14,6 +14,16 @@ class PokemonListViewController: BaseViewController {
     
     lazy var coordinator = PokemonBookCoordinator(navigationController)
     
+    let showTypeSegmented: UISegmentedControl = {
+        let listImg = UIImage(systemName: "list.bullet")
+        let gridImg = UIImage(systemName: "square.grid.3x2")
+        let segment = UISegmentedControl(items: [listImg, gridImg])
+        segment.selectedSegmentIndex = 0
+        
+        return segment
+        
+    }()
+    
     lazy var pokemonListView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -34,17 +44,27 @@ class PokemonListViewController: BaseViewController {
         
         // set title
         let navLabel = UILabel()
+        navLabel.adjustsFontSizeToFitWidth = true
         navLabel.attributedText = self.viewModel.title.value
         self.navigationItem.titleView = navLabel
         
-        
-        let containerView = UIView()
-        containerView.addSubview(favoriteSwitch)
+        // set favorite switch
+        let containerSwitchView = UIView()
+        containerSwitchView.addSubview(favoriteSwitch)
         favoriteSwitch.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        let barButtonItem = UIBarButtonItem(customView: containerView)
-        self.navigationItem.leftBarButtonItem = barButtonItem
+        let barLeftButtonItem = UIBarButtonItem(customView: containerSwitchView)
+        self.navigationItem.leftBarButtonItem = barLeftButtonItem
+        
+        // set show type segment
+        let containerSegmentView = UIView()
+        containerSegmentView.addSubview(showTypeSegmented)
+        showTypeSegmented.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        let barRightButtonItem = UIBarButtonItem(customView: containerSegmentView)
+        self.navigationItem.rightBarButtonItem = barRightButtonItem
         
         // get init data
         viewModel.fetchPokemonList()
@@ -109,6 +129,20 @@ class PokemonListViewController: BaseViewController {
             .subscribe(onNext: { [weak self] isFavorite in
             self?.viewModel.showFavorite(favorite: isFavorite)
         }).disposed(by: disposeBag)
+        
+        showTypeSegmented.rx.selectedSegmentIndex
+            .skip(1)
+            .subscribe(onNext: { [weak self] index in
+                switch index {
+                case 0:
+                    print("show List")
+                case 1:
+                    print("show Grid")
+                default:
+                    break
+                }
+                
+            }).disposed(by: disposeBag)
     }
 }
 

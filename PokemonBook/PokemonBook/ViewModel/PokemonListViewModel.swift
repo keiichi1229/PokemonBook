@@ -16,7 +16,7 @@ class PokemonListViewModel: BaseViewModel {
     
     let isFavorite = BehaviorRelay<Bool>(value: false)
     
-    let onePagelimit = 20
+    let onePagelimit = 100
     var pageOffset = 0
     private(set) var maxPokemon = 0
     
@@ -93,7 +93,7 @@ class PokemonListViewModel: BaseViewModel {
         // pokemon
         let pokemonAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.red,
-            .font: UIFont.dinProBold(30)
+            .font: UIFont.dinProBold(25)
         ]
         attributedString.addAttributes(pokemonAttributes, range: NSRange(location: 0, length: 7))
         
