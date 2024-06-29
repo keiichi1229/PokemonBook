@@ -16,7 +16,7 @@ class PokemonListViewModel: BaseViewModel {
     
     let isFavorite = BehaviorRelay<Bool>(value: false)
     
-    let onePagelimit = 100
+    let onePagelimit = 50
     var pageOffset = 0
     private(set) var maxPokemon = 0
     

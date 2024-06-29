@@ -28,10 +28,21 @@ class PokemonListViewController: BaseViewController {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 250
-        tableView.dataSource = self.viewModel.pokemonDataProvider //self
+        tableView.dataSource = self.viewModel.pokemonDataProvider
         tableView.delegate = self.viewModel.pokemonDataProvider
         tableView.register(PokemonCell.self, forCellReuseIdentifier: PokemonCell.identifier)
         return tableView
+    }()
+    
+    private lazy var pokemonGridView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.dataSource = self.viewModel.pokemonDataProvider
+        collectionView.delegate = self.viewModel.pokemonDataProvider
+        collectionView.register(PokemonGridCell.self, forCellWithReuseIdentifier: PokemonGridCell.identifier)
+        // default is hidden
+        collectionView.isHidden = true
+        return collectionView
     }()
     
     let favoriteSwitch = FavoriteSwitch()
@@ -73,6 +84,7 @@ class PokemonListViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         pokemonListView.reloadData()
+        pokemonGridView.reloadData()
         
         if viewModel.isFavorite.value {
             viewModel.fetchFavoritePokemonList()
@@ -85,6 +97,12 @@ class PokemonListViewController: BaseViewController {
         let bottom = UIApplication.shared.bottomSafeAreaInset
         view.addSubview(pokemonListView)
         pokemonListView.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().inset(bottom)
+        }
+        
+        view.addSubview(pokemonGridView)
+        pokemonGridView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
             make.bottom.equalToSuperview().inset(bottom)
         }
@@ -101,6 +119,7 @@ class PokemonListViewController: BaseViewController {
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 self.pokemonListView.reloadData()
+                self.pokemonGridView.reloadData()
             }).disposed(by: disposeBag)
         
         viewModel.isFavorite.skip(1)
@@ -108,6 +127,10 @@ class PokemonListViewController: BaseViewController {
                 guard let self = self else { return }
                 self.pokemonListView.delegate = isFavorite ? self.viewModel.favoriteDataProvider : self.viewModel.pokemonDataProvider
                 self.pokemonListView.dataSource = isFavorite ? self.viewModel.favoriteDataProvider : self.viewModel.pokemonDataProvider
+                
+                self.pokemonGridView.delegate = isFavorite ? self.viewModel.favoriteDataProvider : self.viewModel.pokemonDataProvider
+                
+                self.pokemonGridView.dataSource =  isFavorite ? self.viewModel.favoriteDataProvider : self.viewModel.pokemonDataProvider
                 
                 if self.pokemonListView.visibleCells.count > 0 {
                     self.pokemonListView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
@@ -117,6 +140,7 @@ class PokemonListViewController: BaseViewController {
                     self.viewModel.fetchFavoritePokemonList()
                 } else {
                     self.pokemonListView.reloadData()
+                    self.pokemonGridView.reloadData()
                 }
             }).disposed(by: disposeBag)
 
@@ -133,15 +157,12 @@ class PokemonListViewController: BaseViewController {
         showTypeSegmented.rx.selectedSegmentIndex
             .skip(1)
             .subscribe(onNext: { [weak self] index in
-                switch index {
-                case 0:
-                    print("show List")
-                case 1:
-                    print("show Grid")
-                default:
-                    break
-                }
+                guard let self = self else { return }
+                self.pokemonListView.isHidden = index == 0 ? false : true
+                self.pokemonGridView.isHidden = !self.pokemonListView.isHidden
                 
+                self.pokemonListView.reloadData()
+                self.pokemonGridView.reloadData()
             }).disposed(by: disposeBag)
     }
 }

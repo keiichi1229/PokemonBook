@@ -8,7 +8,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import SnapKit
 
 class PokemonCell: UITableViewCell {
     
