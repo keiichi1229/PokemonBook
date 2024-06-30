@@ -53,6 +53,7 @@ class PokemonCell: UITableViewCell {
         let label = UILabel()
         label.font = .dinProBold(36)
         label.adjustsFontSizeToFitWidth = true
+        label.textColor = .black
         return label
     }()
     
