@@ -29,7 +29,7 @@ class PokemonListViewModel: BaseViewModel {
     
     func bind() {
         pokemonDataProvider.reachedBottom
-            .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
                 self?.fetchPokemonList()
             }).disposed(by: disposeBag)
