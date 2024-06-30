@@ -66,6 +66,8 @@ class EvolutionPokemonPanel: UIView {
         stackView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.centerX.equalToSuperview()
+            make.leading.greaterThanOrEqualToSuperview().offset(8)
+            make.trailing.lessThanOrEqualToSuperview().offset(-8)
             make.bottom.lessThanOrEqualToSuperview().offset(-8)
         }
     }
