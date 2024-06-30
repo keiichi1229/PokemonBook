@@ -52,6 +52,7 @@ class PokemonCell: UITableViewCell {
     let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .dinProBold(36)
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
     
@@ -85,22 +86,21 @@ class PokemonCell: UITableViewCell {
         
         baseView.addSubview(thumbnailImgView)
         thumbnailImgView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.height.equalTo(150)
-            make.bottom.equalToSuperview()
+            make.leading.centerY.bottom.equalToSuperview()
+            make.width.height.equalTo(150)
         }
-        
         
         baseView.addSubview(idLabel)
         idLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(4)
             make.leading.equalTo(thumbnailImgView.snp.trailing).offset(8)
         }
-
+        
         baseView.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(idLabel)
+            make.trailing.lessThanOrEqualToSuperview().offset(-50)
         }
 
         baseView.addSubview(typeLabel)

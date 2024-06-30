@@ -13,14 +13,13 @@ import Foundation
 class PokemonListViewModel: BaseViewModel {
     let pokemonDataProvider = PokemonDataProvider()
     let favoriteDataProvider = PokemonFavoriteDataProvider()
+    var apiProvider: ApiProvider = ApiProvider.shared
     
     let isFavorite = BehaviorRelay<Bool>(value: false)
     
     let onePagelimit = 50
     var pageOffset = 0
     private(set) var maxPokemon = 0
-    
-    lazy var title = BehaviorRelay<NSAttributedString>(value: self.createTitleAttributing())
     
     override init() {
         super.init()
@@ -49,7 +48,7 @@ class PokemonListViewModel: BaseViewModel {
         
         manageActivityIndicator.accept(true)
         
-        ApiProvider.shared
+        apiProvider
             .request(PokemonDataService.fetchPokemonList(limit: onePagelimit, offset: pageOffset))
             .subscribe(onSuccess: { [weak self] res in
                 self?.manageActivityIndicator.accept(false)
@@ -84,29 +83,5 @@ class PokemonListViewModel: BaseViewModel {
     func fetchFavoritePokemonList() {
         let favoriteList = AppCache.shared.getFavoritePokemonIds()
         favoriteDataProvider.favoriteIdList.accept(favoriteList)
-    }
-    
-    private func createTitleAttributing() -> NSAttributedString {
-        // todo:: hard code should be optimization
-        let attributedString = NSMutableAttributedString(string: "PokemonBook")
-        
-        // pokemon
-        let pokemonAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.red,
-            .font: UIFont.dinProBold(25)
-        ]
-        attributedString.addAttributes(pokemonAttributes, range: NSRange(location: 0, length: 7))
-        
-        // o
-        attributedString.addAttribute(.foregroundColor, value: UIColor.systemGreen, range: NSRange(location: 1, length: 1))
-        
-        // book
-        let bookAttributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: UIColor.blue,
-            .font: UIFont.dinProBold(20)
-        ]
-        attributedString.addAttributes(bookAttributes, range: NSRange(location: 7, length: 4))
-        
-        return attributedString
     }
 }

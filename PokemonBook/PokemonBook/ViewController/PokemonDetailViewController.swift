@@ -161,6 +161,7 @@ class PokemonDetailViewController: BaseViewController {
         viewModel.title.subscribe(onNext: { [weak self] title in
             let navLabel = UILabel()
             navLabel.attributedText = title
+            navLabel.adjustsFontSizeToFitWidth = true
             self?.navigationItem.titleView = navLabel
         }).disposed(by: disposeBag)
         
@@ -186,6 +187,11 @@ class PokemonDetailViewController: BaseViewController {
         viewModel.favorite.subscribe(onNext: { [weak self] isFavorite in
             self?.favoriteButton.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
             
+        }).disposed(by: disposeBag)
+        
+        viewModel.presentAlert.subscribe(onNext: {[weak self] args in
+            let (title, msg) = args
+            self?.presentAlert(title: title, message: msg, callback: nil)
         }).disposed(by: disposeBag)
     }
 }

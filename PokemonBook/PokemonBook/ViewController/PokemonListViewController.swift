@@ -53,11 +53,12 @@ class PokemonListViewController: BaseViewController {
         self.viewModel.pokemonDataProvider.coordinator = coordinator
         self.viewModel.favoriteDataProvider.coordinator = coordinator
         
-        // set title
-        let navLabel = UILabel()
-        navLabel.adjustsFontSizeToFitWidth = true
-        navLabel.attributedText = self.viewModel.title.value
-        self.navigationItem.titleView = navLabel
+        // set logo
+        let logoImage = UIImage(named: "LaunchIcon")
+        let logoImageView = UIImageView(image: logoImage)
+        logoImageView.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        logoImageView.contentMode = .scaleAspectFit
+        navigationItem.titleView = logoImageView
         
         // set favorite switch
         let containerSwitchView = UIView()

@@ -19,6 +19,7 @@ class PokemonDetailViewModel: BaseViewModel {
     let pokemonImgUrl = BehaviorRelay<String>(value: "")
     let evolutionIds = BehaviorRelay<[String]>(value: [])
     lazy var favorite = BehaviorRelay<Bool>(value: AppCache.shared.isFavorite(id: self.pId))
+    var apiProvider: ApiProvider = ApiProvider.shared
     
     private let pokemonData = BehaviorRelay<PokemonData?>(value: nil)
     
@@ -75,8 +76,8 @@ class PokemonDetailViewModel: BaseViewModel {
         }
         
         self.manageActivityIndicator.accept(true)
-        Observable.zip(ApiProvider.shared.observe(PokemonDataService.fetchPokemonDataFromId(pId: pId)),
-                       ApiProvider.shared.observe(PokemonDataService.fetchPokemonSpeciesFromId(pId: pId)))
+        Observable.zip(apiProvider.observe(PokemonDataService.fetchPokemonDataFromId(pId: pId)),
+                       apiProvider.observe(PokemonDataService.fetchPokemonSpeciesFromId(pId: pId)))
             .subscribe(onNext: { [weak self] event1, event2 in
                 self?.manageActivityIndicator.accept(false)
                 switch (event1, event2) {
@@ -105,7 +106,7 @@ class PokemonDetailViewModel: BaseViewModel {
     
     private func fetchEvolutionChain(evoId: String) {
         self.manageActivityIndicator.accept(true)
-        ApiProvider.shared
+        apiProvider
             .request(PokemonDataService.fetchEvolutionChainFromId(evoId: evoId))
             .subscribe(onSuccess: { [weak self] res in
                 self?.manageActivityIndicator.accept(false)

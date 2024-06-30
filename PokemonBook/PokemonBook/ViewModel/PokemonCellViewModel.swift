@@ -17,13 +17,14 @@ class PokemonCellViewModel: BaseViewModel {
     let pokemonImgUrl = BehaviorRelay<String>(value: "")
     let types = BehaviorRelay<String>(value: "")
     let favorite = BehaviorRelay<Bool>(value: false)
+    var apiProvider: ApiProvider = ApiProvider.shared
     
     func fetchPokemonCellData(_ id: String) {
         if let pokemon = AppCache.shared.getPokemon(id: id) {
             setupPokemon(data: pokemon)
         }
         
-        ApiProvider.shared
+        apiProvider
             .request(PokemonDataService.fetchPokemonDataFromId(pId: id))
             .subscribe(onSuccess: { [weak self] res in
                 let data = GetPokemonDataResponse(JSON(res)).data

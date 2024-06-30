@@ -16,7 +16,7 @@ class EvolutionPokemonView: UIView {
     
     let pokenmonImgView: UIImageView = {
         let imgView = UIImageView()
-        imgView.contentMode = .scaleAspectFill
+        imgView.contentMode = .scaleAspectFit
         imgView.layer.borderWidth = 3
         imgView.layer.borderColor = UIColor.white.cgColor
         imgView.layer.cornerRadius = 3

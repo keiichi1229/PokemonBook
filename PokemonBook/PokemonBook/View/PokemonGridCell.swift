@@ -61,8 +61,9 @@ class PokemonGridCell: UICollectionViewCell {
         
         baseView.addSubview(nameLabel)
         nameLabel.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview()
             make.top.equalTo(thumbnailImgView.snp.bottom)
+            make.height.equalTo(20)
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
         baseView.addSubview(favoriteImageView)
@@ -78,6 +79,10 @@ class PokemonGridCell: UICollectionViewCell {
             }).disposed(by: disposeBag)
         
         viewModel.name.bind(to: nameLabel.rx.text).disposed(by: disposeBag)
+//        viewModel.name.subscribe(onNext: { [weak self] name in
+//            print("name: \(name)")
+//            self?.nameLabel.text = name
+//        }).disposed(by: disposeBag)
         
         viewModel.favorite.subscribe(onNext: { [weak self] isFavorite in
             self?.favoriteImageView.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")
