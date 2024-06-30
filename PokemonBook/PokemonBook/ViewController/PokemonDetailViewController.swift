@@ -38,6 +38,7 @@ class PokemonDetailViewController: BaseViewController {
         label.layer.borderWidth = 1
         label.layer.cornerRadius = 5
         label.layer.masksToBounds = true
+        label.textColor = .black
         return label
     }()
     
@@ -45,6 +46,7 @@ class PokemonDetailViewController: BaseViewController {
         let label = PaddedLabel()
         label.font = .dinProMedium(18)
         label.numberOfLines = 0
+        label.textColor = .black
         return label
     }()
     
@@ -52,6 +54,7 @@ class PokemonDetailViewController: BaseViewController {
         let label = PaddedLabel(insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
         label.font = .dinPro(15)
         label.text = "Types"
+        label.textColor = .black
         label.layer.borderWidth = 1
         label.layer.cornerRadius = 5
         label.layer.masksToBounds = true

@@ -11,6 +11,7 @@ import SwiftyJSON
 import Foundation
 
 class PokemonListViewModel: BaseViewModel {
+    let dataLock = NSLock()
     let pokemonDataProvider = PokemonDataProvider()
     let favoriteDataProvider = PokemonFavoriteDataProvider()
     var apiProvider: ApiProvider = ApiProvider.shared
@@ -51,26 +52,30 @@ class PokemonListViewModel: BaseViewModel {
         apiProvider
             .request(PokemonDataService.fetchPokemonList(limit: onePagelimit, offset: pageOffset))
             .subscribe(onSuccess: { [weak self] res in
-                self?.manageActivityIndicator.accept(false)
+                guard let self = self else { return }
+                self.manageActivityIndicator.accept(false)
                 let pokemonListResponse = GetPokemonListResponse(JSON(res))
-                self?.maxPokemon = pokemonListResponse.maxCount
+                self.maxPokemon = pokemonListResponse.maxCount
                 let pokemonEntryList = pokemonListResponse.data
-                var list = self?.pokemonDataProvider.pokemonIdList.value
+                var list = self.pokemonDataProvider.pokemonIdList.value
                 
-                if let offset = self?.pageOffset, offset == 0 {
+                if self.pageOffset == 0 {
                     // clean cache
-                    list?.removeAll()
+                    list.removeAll()
                 }
                 
                 for entry in pokemonEntryList {
-                    list?.append(PokemonHelper.shared.parseUrlToPokemonId(urlString: entry.url))
+                    let pokemonId = PokemonHelper.shared.parseUrlToPokemonId(urlString: entry.url)
+                    if !list.contains(pokemonId) {
+                        list.append(pokemonId)
+                    }
                 }
                 
-                if let list = list {
-                    self?.pokemonDataProvider.pokemonIdList.accept(list)
-                }
+                self.pokemonDataProvider.pokemonIdList.accept(list)
                 
-                self?.pageOffset += self?.onePagelimit ?? 0
+                self.dataLock.lock()
+                self.pageOffset += self.onePagelimit
+                self.dataLock.unlock()
                 
                 // clear http request cache for list
                 URLCache.shared.removeAllCachedResponses()

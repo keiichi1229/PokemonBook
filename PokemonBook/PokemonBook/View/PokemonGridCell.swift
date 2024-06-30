@@ -44,6 +44,7 @@ class PokemonGridCell: UICollectionViewCell {
         label.font = .dinProBold(20)
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .center
+        label.textColor = .black
         return label
     }()
     
@@ -79,10 +80,6 @@ class PokemonGridCell: UICollectionViewCell {
             }).disposed(by: disposeBag)
         
         viewModel.name.bind(to: nameLabel.rx.text).disposed(by: disposeBag)
-//        viewModel.name.subscribe(onNext: { [weak self] name in
-//            print("name: \(name)")
-//            self?.nameLabel.text = name
-//        }).disposed(by: disposeBag)
         
         viewModel.favorite.subscribe(onNext: { [weak self] isFavorite in
             self?.favoriteImageView.image = isFavorite ? UIImage(systemName: "heart.fill") : UIImage(systemName: "heart")

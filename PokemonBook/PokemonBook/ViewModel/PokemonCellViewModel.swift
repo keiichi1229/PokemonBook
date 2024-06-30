@@ -23,15 +23,15 @@ class PokemonCellViewModel: BaseViewModel {
         if let pokemon = AppCache.shared.getPokemon(id: id) {
             setupPokemon(data: pokemon)
         }
-        
+    
         apiProvider
             .request(PokemonDataService.fetchPokemonDataFromId(pId: id))
             .subscribe(onSuccess: { [weak self] res in
                 let data = GetPokemonDataResponse(JSON(res)).data
-                self?.setupPokemon(data: data)
                 AppCache.shared.savePokemon(id: data.id, pokemon: data)
+                self?.setupPokemon(data: data)
         }, onFailure: { err in
-            print("Cell Error:\(err)")
+            print("PokemonCell Error:\(err)")
         }).disposed(by: disposeBag)
     }
     
